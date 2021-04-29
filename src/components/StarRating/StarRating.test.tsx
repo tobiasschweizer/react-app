@@ -6,7 +6,7 @@ import { act } from 'react-dom/test-utils';
 
 describe('<StarRating />', () => {
 
-  let container: any = null;
+  let container: HTMLDivElement | null;
   beforeEach(() => {
     // setup a DOM element as a render target
     container = document.createElement("div");
@@ -15,15 +15,35 @@ describe('<StarRating />', () => {
 
   afterEach(() => {
     // cleanup on exiting
-    unmountComponentAtNode(container);
-    container.remove();
+    unmountComponentAtNode(container!);
+    container!.remove();
     container = null;
   });
 
-  test('it renders', () => {
+  test('it renders the initial state', () => {
     act(() => {
-      render(<StarRating label="Kit"/>, container);
+      render(<StarRating label='Kit'/>, container);
     });
-    expect(container.textContent).toBe("Starring Kit");
+
+    expect(container!.querySelector('.starring')!.textContent).toBe('Starring Kit 0');
   });
+
+  test('it updates the initial state on click', () => {
+    act(() => {
+      render(<StarRating label='Kit'/>, container);
+    });
+
+    expect(container!.querySelector('.starring')!.textContent).toBe('Starring Kit 0');
+
+    const button = container!.querySelector('button');
+
+    act(() => {
+      button!.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+    });
+
+    expect(container!.querySelector('.starring')!.textContent).toBe('Starring Kit 1');
+
+  });
+
+
 });
